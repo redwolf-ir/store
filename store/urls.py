@@ -8,7 +8,7 @@ from django.conf import settings
 from django.urls import path
 
 urlpatterns = [
-    url(r'^register/?$', register, name = 'register'),
+    url(r'^register/$(?i)', register, name = 'register'),
     # url('settings/', include('accounts.urls')),
     # url(r'^logout/?$', logout, name='logout'),
     # url(r'^login/?$', login, name = 'login'),

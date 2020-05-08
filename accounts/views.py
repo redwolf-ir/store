@@ -37,7 +37,9 @@ def register(request):
 				user.save()
 				token = make_token(username, email)
 				userid = User.objects.get(email=request.POST['email']).id
-				messages.success(request, "<a href=\"{}?token={}&id={}\">لینک رو به رو</a>".format(request.build_absolute_uri('/register/'), token, userid))
+				messages.success(request, "<a href=\"{}?token={}&id={}\">\
+				لینک رو به رو</a>".format(request.build_absolute_uri\
+				('/register/'), token, userid))
 				return redirect('register')
 			else:
 				messages.success(request, "پسوردهای وارد شده با هم برابر نیست.")
