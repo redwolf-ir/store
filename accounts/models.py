@@ -21,3 +21,11 @@ class Profile(models.Model):
 	@receiver(post_save, sender=User)
 	def save_user_profile(sender, instance, **kwargs):
 		instance.profile.save()
+
+class Passwordresetcodes(models.Model):
+	user = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True)
+	code = models.CharField(max_length = 100, blank=False)
+	time = models.DateTimeField(auto_now_add = True)
+
+	def __str__(self):
+		return '--{}-- Password Reset Request'.format(self.user)

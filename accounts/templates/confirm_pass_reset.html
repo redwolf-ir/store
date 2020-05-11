@@ -1,0 +1,22 @@
+{% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+{% endfor %}
+
+<form method="post" action="{% url 'pasword_reset' %}">
+  {% csrf_token %}
+  <input type="hidden" name="passconfirm" value="True" />
+  <label for="password" >کلمه عبور</label>
+  <input type="password" name="password" placeholder="حداقل پنج کاراکتر" required pattern=".{5,}">
+
+  <br>
+  <label for="password2" >کلمه عبور</label>
+  <input type="password" name="password2" placeholder="حداقل پنج کاراکتر" required pattern=".{5,}">
+
+  <br>
+  <button type="submit" >درخواست ایمیل فعال‌سازی اکانت</button>
+</form>
