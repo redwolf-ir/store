@@ -63,6 +63,7 @@ def register(request):
 			thisuser.save()
 			messages.success(request, 'ثبت نام شما با موفقیت انجام شد.')
 			Profile.objects.get_or_create(user=request.user)
+			return redirect('login')
 		elif code == token and thisuser.is_active == True:
 			messages.warning(request, 'از این توکن قبلا استفاده شده است!\
 			اگر پسورد خود را گم کرده اید از قسمت %s استفاده کنید.\
@@ -131,13 +132,17 @@ def password_reset(request):
 		thisuser = get_object_or_404(User, id=userid)
 		token = get_object_or_404(Passwordresetcodes, user=thisuser).code
 		if code == token and thisuser.is_active == True:
+			if  thisuser.id == userid:
+				messages.success(request, thisuser.id)
 			now = datetime.now()
 			utc = pytz.UTC
 			dt = now.replace(tzinfo=utc) - get_object_or_404(Passwordresetcodes, user=thisuser).time.replace(tzinfo=utc)
 			dt= dt.days
 			if dt < 1:
+				request.session['requested_user'] = userid
 				return render(request, 'confirm_pass_reset.html', {})
 			else:
+				Passwordresetcodes.objects.get(user=thisuser).delete()
 				messages.error(request, 'زمانه استفاده از توکن گذشته است. لطفا\
 				مجددا درخواست نمایید.')
 				return redirect('pasword_reset')
@@ -150,6 +155,23 @@ def password_reset(request):
 			دوباره امتحان کنید.')
 			auth_login(request, thisuser)
 			return redirect('pasword_reset')
+
+	# karbar form password jadid ra por karde ast
+	elif 'passconfirm' in request.POST:
+		password = request.POST['password']
+		password2 = request.POST['password2']
+		userid = request.session.get('requested_user')
+		thisuser = get_object_or_404(User, id=userid)
+		Passwordresetcodes.objects.get(user=thisuser).delete()
+		if password == password2:
+			password2 = None
+			thisuser.set_password(request.POST['password'])
+			thisuser.save()
+			messages.success(request, "پسورد شما با موفقیت تغییر پیدا کرد.")
+			return redirect('login')
+		else:
+			messages.success(request, "پسوردهای وارد شده با هم برابر نیست.")
+			return redirect(request.META.get('HTTP_REFERER'))
 
 	# karbar avalin bar ast be safhe register amade ast
 	else:
